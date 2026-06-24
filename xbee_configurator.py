@@ -14,6 +14,7 @@ PC版 XBee 參數讀取及設定程式
 
 Author: Claude AI Assistant + Kennes
 Date: 2026-01-12
+Version: 1.96 - 修正深色主題相容性問題
 """
 
 import sys
@@ -666,7 +667,7 @@ class XBeeConfiguratorGUI(QMainWindow):
         
     def init_ui(self):
         """初始化使用者介面"""
-        self.setWindowTitle("XBee 參數設定工具 v1.95")
+        self.setWindowTitle("XBee 參數設定工具 v1.96")
         self.setMinimumSize(840, 750)
         
         # ============================================================
@@ -804,6 +805,18 @@ class XBeeConfiguratorGUI(QMainWindow):
             }}
             QScrollBar::handle:vertical:hover {{
                 background: {COLOR_PRIMARY_HOVER};
+            }}
+            QProgressBar {{
+                border: 1px solid {COLOR_BORDER};
+                border-radius: 4px;
+                background-color: #e0e0e0;
+                text-align: center;
+                color: {COLOR_TEXT_DARK};
+                font-weight: bold;
+            }}
+            QProgressBar::chunk {{
+                background-color: {COLOR_PRIMARY};
+                border-radius: 3px;
             }}
         """)
         
@@ -1699,6 +1712,34 @@ class XBeeConfiguratorGUI(QMainWindow):
 def main():
     app = QApplication(sys.argv)
     app.setStyle('Fusion')
+    
+    # ============================================================
+    # 強制使用淺色主題調色板，避免受 Windows 深色主題影響
+    # ============================================================
+    light_palette = QPalette()
+    
+    # 基本顏色
+    light_palette.setColor(QPalette.ColorRole.Window, QColor(245, 245, 245))           # 視窗背景
+    light_palette.setColor(QPalette.ColorRole.WindowText, QColor(44, 62, 80))          # 視窗文字
+    light_palette.setColor(QPalette.ColorRole.Base, QColor(255, 255, 255))             # 輸入框背景
+    light_palette.setColor(QPalette.ColorRole.AlternateBase, QColor(245, 245, 245))    # 交替背景
+    light_palette.setColor(QPalette.ColorRole.ToolTipBase, QColor(255, 255, 255))      # 工具提示背景
+    light_palette.setColor(QPalette.ColorRole.ToolTipText, QColor(44, 62, 80))         # 工具提示文字
+    light_palette.setColor(QPalette.ColorRole.Text, QColor(44, 62, 80))                # 一般文字
+    light_palette.setColor(QPalette.ColorRole.Button, QColor(52, 152, 219))            # 按鈕背景
+    light_palette.setColor(QPalette.ColorRole.ButtonText, QColor(255, 255, 255))       # 按鈕文字
+    light_palette.setColor(QPalette.ColorRole.BrightText, QColor(255, 0, 0))           # 明亮文字
+    light_palette.setColor(QPalette.ColorRole.Link, QColor(52, 152, 219))              # 連結
+    light_palette.setColor(QPalette.ColorRole.Highlight, QColor(52, 152, 219))         # 選中背景
+    light_palette.setColor(QPalette.ColorRole.HighlightedText, QColor(255, 255, 255))  # 選中文字
+    
+    # 停用狀態顏色
+    light_palette.setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.WindowText, QColor(127, 127, 127))
+    light_palette.setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Text, QColor(127, 127, 127))
+    light_palette.setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.ButtonText, QColor(127, 127, 127))
+    
+    app.setPalette(light_palette)
+    # ============================================================
     
     # 設定應用程式字型
     font = QFont("Microsoft JhengHei", 10)
